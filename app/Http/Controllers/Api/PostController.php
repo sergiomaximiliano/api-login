@@ -63,9 +63,14 @@ class PostController extends BaseController
         return $this->success(null, 'Post eliminado');
     }
 
-    public function filterByTitle(Request $request, $title)
+    public function filterByTitle(Request $request)
     {
-        $posts = $request->user()->posts()->where('title', 'like', '%' . $title . '%')->get();
+        $title = $request->input('title');
+        $perPage = $request->input('per_page', 10);
+        $posts = $request->user()
+        ->posts()
+        ->where('title', 'like', '%' . $title . '%')
+        ->paginate($perPage);
         if ($posts->isEmpty()) {
             return $this->error('No se encontraron resultados para el titulo: ' . $title, null, 404);
         }
